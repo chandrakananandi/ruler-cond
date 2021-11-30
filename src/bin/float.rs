@@ -187,6 +187,7 @@ impl SynthLanguage for Math {
             env.insert(var, vec![]);
         }
 
+            // LOOK HERE TODO FOR CVEC MANIP
         let mut cvecs = gen_samples(&mut synth.rng, n, env.keys().len());
         for (_, cvec) in env.iter_mut() {
             let c = cvecs.pop().unwrap();

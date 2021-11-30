@@ -33,6 +33,12 @@ pub type HashSet<K> = rustc_hash::FxHashSet<K>;
 /// IndexMap data implementation used in rustc
 pub type IndexMap<K, V> = indexmap::IndexMap<K, V, BuildHasherDefault<rustc_hash::FxHasher>>;
 
+pub enum ValidationResult<T> {
+    Valid,
+    Invalid(Vec<T>),
+    Other
+}
+
 pub use bv::*;
 pub use equality::*;
 pub use util::*;
@@ -838,6 +844,10 @@ pub struct SynthParams {
     ///////////////////
     #[clap(long)]
     pub prior_rules: Option<String>,
+    #[clap(long)]
+    pub prior_cvecs: Option<String>,
+    #[clap(long, default_value = "0")]
+    pub prior_cvecs_limit: usize,
 
 }
 
