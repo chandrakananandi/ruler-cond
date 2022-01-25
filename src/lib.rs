@@ -8,15 +8,20 @@ use clap::Parser;
 use egg::*;
 use rand::SeedableRng;
 use rand_pcg::Pcg64;
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize, Serializer, Deserializer};
+use serde::de;
 use std::{borrow::{Borrow, Cow}};
 use std::{cmp::Ordering, hash::Hash};
 use std::{
-    fmt::{Debug, Display},
+    fmt::{Debug, Display, Formatter},
     time::Duration,
     time::Instant,
 };
+use std::str::FromStr;
 use std::{hash::BuildHasherDefault, sync::Arc};
+use std::fs::{self, File, OpenOptions};
+use std::io::{Write, BufReader, BufRead, self};
+use std::path::Path;
 
 mod bv;
 mod convert_sexp;
@@ -49,6 +54,42 @@ pub fn letter(i: usize) -> &'static str {
     &alpha[i..i + 1]
 }
 
+
+// capture the rule and the counterexample for future cvecs
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Counterexample<L: SynthLanguage> {
+    pub rule: String,
+    // TODO: unsure if this is a good way to ensure serializability
+    #[serde(serialize_with = "use_display")]
+    #[serde(deserialize_with = "use_fromstr")]
+    pub counterexample: L::Constant,
+}
+
+fn use_display<T, S>(value: &T, serializer: S) -> Result<S::Ok, S::Error>
+where
+    T: Display,
+    S: Serializer
+{
+    serializer.collect_str(value)
+}
+
+fn use_fromstr<'de, T, D>(deserializer: D) -> Result<T, D::Error>
+where
+    T: FromStr,
+    D: Deserializer<'de>
+{
+    let s = String::deserialize(deserializer)?;
+    // T::from_str(&s).map_err(de::Error::custom)
+    Ok(FromStr::from_str(&s).ok().unwrap())
+}
+
+// impl Display for Counterexample<L> {
+//     // This trait requires `fmt` with this exact signature.
+//     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
+//         write!(f, "{{ \"rule\": \"{}\", \"ce\": \"{}\" }}", self.rule, self.counterexample)
+//     }
+// }
+
 /// Properties of cvecs in `Ruler`; currently onyl their length.
 /// cvecs are stored as [eclass analysis data](https://docs.rs/egg/0.6.0/egg/trait.Analysis.html).
 #[derive(Debug, Clone)]
@@ -70,7 +111,7 @@ impl Default for SynthAnalysis {
 /// `eval` implements an interpreter for the domain. It returns a `Cvec` of length `cvec_len`
 /// where each cvec element is computed using `eval`.
 pub trait SynthLanguage: egg::Language + Send + Sync + 'static {
-    type Constant: Clone + Hash + Eq + Debug + Display;
+    type Constant: Clone + Hash + Eq + Debug + Display + FromStr;
 
     fn eval<'a, F>(&'a self, cvec_len: usize, f: F) -> CVec<Self>
     where
@@ -276,6 +317,7 @@ pub trait SynthLanguage: egg::Language + Send + Sync + 'static {
                 let file = std::fs::File::create(&outfile)
                     .unwrap_or_else(|_| panic!("Failed to open '{}'", outfile));
                 serde_json::to_writer_pretty(file, &report).expect("failed to write json");
+                // write_cvec_to_file("counterexamples.json".to_string(), syn.counterexamples); // can't guarantee writable 
             }
             Command::Derive(params) => derive::derive::<Self>(params),
             Command::ConvertSexp(params) => convert_sexp::convert::<Self>(params),
@@ -292,7 +334,10 @@ pub struct Synthesizer<L: SynthLanguage> {
     pub all_eqs: EqualityMap<L>,
     pub old_eqs: EqualityMap<L>,
     pub new_eqs: EqualityMap<L>,
+    pub old_cvec: Vec<Option<L::Constant>>,
     pub smt_unknown: usize,
+    pub counterexamples: Vec<Counterexample<L>>, // todo is this the right thing...?
+    // pub counterexamples: Vec<L::Constant>, // todo is this the right thing...?
 }
 
 
@@ -310,6 +355,22 @@ impl<L: SynthLanguage> Synthesizer<L> {
             }
         }
 
+        let mut old_cvec: Vec<Option<L::Constant>> = vec![];
+
+        if let Some(filename) = params.prior_cvecs.clone() {
+        //     let file = File::open(Path::new(&filename)).unwrap();
+        //     let reader = BufReader::new(file);
+            let contents = fs::read_to_string(filename).unwrap();
+            let ces : Vec<Counterexample<L>> = serde_json::from_str(&contents).unwrap();
+            // let ces : Vec<Counterexample<L>> = serde_json::from_reader(reader).unwrap();
+
+            for counterexample in ces {
+                // TODO also need to count how many counterexamples we allow 
+                // TODO implement a tracker that checks to see where the counterexample came from
+                old_cvec.push(Some(counterexample.counterexample));
+            }
+        }
+
         let mut synth = Self {
             rng: Pcg64::seed_from_u64(params.seed),
             egraph: Default::default(),
@@ -317,7 +378,9 @@ impl<L: SynthLanguage> Synthesizer<L> {
             old_eqs: olds.clone(),
             new_eqs: Default::default(),
             all_eqs: olds, // also add prior rules to all_eqs
+            old_cvec: old_cvec,
             smt_unknown: 0,
+            counterexamples: vec![], 
             params,
         };
 
@@ -702,6 +765,9 @@ impl<L: SynthLanguage> Synthesizer<L> {
             final_runner.run(rws);
             self.params.no_conditionals = old;
         }
+
+        println!("writing cvecs... {}", self.counterexamples.len());
+        write_cvec_to_file("ces.json".to_string(),  self.counterexamples);
 
         let num_rules = self.new_eqs.len();
         let mut n_eqs: Vec<_> = self.new_eqs.clone().into_iter().map(|(_, eq)| eq).collect();

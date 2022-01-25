@@ -125,7 +125,8 @@ impl SynthLanguage for Math {
             .map(|s| s.parse().unwrap())
             .collect();
 
-        let mut consts: Vec<Option<Constant>> = vec![];
+        // let mut consts: Vec<Option<Constant>> = vec![];
+        let mut consts: Vec<Option<Constant>> = synth.old_cvec.clone();
 
         for i in 0..synth.params.important_cvec_offsets {
             consts.push(mk_constant(
@@ -326,11 +327,26 @@ impl SynthLanguage for Math {
             lasses.append(&mut rasses);
             let all = &lasses[..];
             solver.assert(&lexpr._eq(&rexpr).not());
+            // TODO: get a counterexample.
             match solver.check_assumptions(all) {
                 // match solver.check() {
                 SatResult::Unsat => true,
                 SatResult::Sat => {
                     // println!("z3 validation: failed for {} => {}", lhs, rhs);
+                    // TODO: we don't have counterexamples... yet 
+                    let model = solver.get_model();
+        
+                    // let inputs = eval_bitvecs(&model, &inputs,);
+
+                    // print!("{:?}\n", model.unwrap());
+                    // write_cvec_to_file("rat-cvecs.txt".to_string(), vec![model.unwrap().to_string()]);
+                    
+                    // synth.counterexamples.push(Counterexample {
+                    //     rule: "rule".to_string(), 
+                    //     counterexample: format!("{:?}\n", model.unwrap())}); //interpret ces...
+                    
+                        // print!("{:?}", synth.counterexamples);
+                    // Ok(Verification::Counterexample(inputs))
                     false
                 }
                 SatResult::Unknown => {
@@ -365,7 +381,24 @@ impl SynthLanguage for Math {
 
             let lvec = Self::eval_pattern(lhs, &env, n);
             let rvec = Self::eval_pattern(rhs, &env, n);
-
+            
+            if (lvec != rvec) {
+                for i in  0..n {
+                    if lvec[i] != rvec[i] {
+                        let keys = env.keys();
+                        for k in keys {
+                            let val_to_write = env.get(k).unwrap()[i].clone().unwrap();
+                            // println!("{}", val_to_write);
+                            // TODO: need to actually save this to a file now... 
+                            synth.counterexamples.push(Counterexample {
+                            rule: format!("{:?} -> {:?}", lvec, rvec), 
+                            counterexample: val_to_write});
+                            // println!("{:?}", synth.counterexamples.len())
+                        }
+                    }
+                }
+            }
+            
             lvec == rvec
         }
     }

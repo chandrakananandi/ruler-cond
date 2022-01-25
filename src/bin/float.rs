@@ -199,6 +199,18 @@ impl SynthLanguage for Math {
         let lvec = Self::eval_pattern(lhs, &env, n);
         let rvec = Self::eval_pattern(rhs, &env, n);
 
+        if (lvec != rvec) {
+            for i in  0..n {
+                if lvec[i] != rvec[i] {
+                    let keys = env.keys();
+                    for k in keys {
+                        let val_to_write = env.get(k).unwrap()[i];
+                        println!("{}", val_to_write.unwrap());
+                    }
+                }
+            }
+        }
+
         lvec == rvec
     }
 }

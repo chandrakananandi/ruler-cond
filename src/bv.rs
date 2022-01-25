@@ -226,17 +226,7 @@ macro_rules! impl_bv {
             }
 
             fn init_synth(synth: &mut Synthesizer<Self>) {
-                let mut consts: Vec<Option<BV>> = vec![];
-
-                if let Some(filename) = &synth.params.prior_cvecs {
-                    let prior_cvec = read_cvec_from_file::<BV>(filename.to_string());
-                    print!("{:?}", prior_cvec);
-                    for counterexample in prior_cvec {
-                        // TODO also need to count how many counterexamples we allow 
-                        // TODO implement a tracker that checks to see where the counterexample came from
-                        consts.push(Some(counterexample));
-                    }
-                }
+                let mut consts: Vec<Option<BV>> = synth.old_cvec.clone();
                 
                 
                 if synth.params.complete_cvec {
@@ -398,21 +388,26 @@ macro_rules! impl_bv {
                     let lvec = Self::eval_pattern(lhs, &env, n);
                     let rvec = Self::eval_pattern(rhs, &env, n);
 
-                    // now compare each value to find a counterexample
+                    //now compare each value to find a counterexample
                     // if let Some(lvec_v) = lvec {
-                    //     if let Some(rvec_v) = rvec {
-                    //         if (lvec_v != rvec_v) {
-                    //             for i in  0..n {
-                    //                 if lvec_v[i] != rvec_v[i] {
-                    //                     let keys = env.keys();
-                    //                     for k in keys {
-                    //                         let val_to_write = env.get(k).unwrap().get(i);
-                    //                         println!("{}", val_to_write.unwrap().unwrap());
-                    //                     }
-                    //                 }
-                    //             }
-                    //         }
-                    //     }
+                        // if let Some(rvec_v) = rvec {
+                            if (lvec != rvec) {
+                                for i in  0..n {
+                                    if lvec[i] != rvec[i] {
+                                        let keys = env.keys();
+                                        for k in keys {
+                                            let val_to_write = env.get(k).unwrap()[i];
+                                            // println!("{}", val_to_write.unwrap());
+                                            // TODO: need to actually save this to a file now... 
+                                            synth.counterexamples.push(Counterexample {
+                                                rule: "rule".to_string(), 
+                                                counterexample: val_to_write.unwrap()});
+                                            print!("{:?}", synth.counterexamples)
+                                        }
+                                    }
+                                }
+                            }
+                        // }
                     // }
 
                     
