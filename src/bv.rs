@@ -397,8 +397,6 @@ macro_rules! impl_bv {
                                         let keys = env.keys();
                                         for k in keys {
                                             let val_to_write = env.get(k).unwrap()[i];
-                                            // println!("{}", val_to_write.unwrap());
-                                            // TODO: need to actually save this to a file now... 
                                             synth.counterexamples.push(Counterexample {
                                                 rule: "rule".to_string(), 
                                                 counterexample: val_to_write.unwrap()});

@@ -360,14 +360,23 @@ impl<L: SynthLanguage> Synthesizer<L> {
         if let Some(filename) = params.prior_cvecs.clone() {
         //     let file = File::open(Path::new(&filename)).unwrap();
         //     let reader = BufReader::new(file);
+        
+            // TODO: move back away from json? now with json we need to parse everything. also hard to add rules
             let contents = fs::read_to_string(filename).unwrap();
+            // print!("{}", contents);
             let ces : Vec<Counterexample<L>> = serde_json::from_str(&contents).unwrap();
+            print!("{:?}", ces);
             // let ces : Vec<Counterexample<L>> = serde_json::from_reader(reader).unwrap();
-
+            let mut so_far = 0;
             for counterexample in ces {
                 // TODO also need to count how many counterexamples we allow 
                 // TODO implement a tracker that checks to see where the counterexample came from
+                if so_far >= params.prior_cvecs_limit {
+                    break;
+                }
+                print!("adding cvec {}", counterexample.counterexample);
                 old_cvec.push(Some(counterexample.counterexample));
+                so_far += 1;
             }
         }
 
@@ -912,7 +921,7 @@ pub struct SynthParams {
     pub prior_rules: Option<String>,
     #[clap(long)]
     pub prior_cvecs: Option<String>,
-    #[clap(long, default_value = "0")]
+    #[clap(long, default_value = "0")] // TODO replace with usize::MAX
     pub prior_cvecs_limit: usize,
 
 }

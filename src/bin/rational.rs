@@ -127,6 +127,7 @@ impl SynthLanguage for Math {
 
         // let mut consts: Vec<Option<Constant>> = vec![];
         let mut consts: Vec<Option<Constant>> = synth.old_cvec.clone();
+        println!("current consts length is {}", consts.len());
 
         for i in 0..synth.params.important_cvec_offsets {
             consts.push(mk_constant(
@@ -141,6 +142,8 @@ impl SynthLanguage for Math {
 
         consts.sort();
         consts.dedup();
+
+        println!("LEN IS {}", consts.len());
 
         let mut consts = self_product(&consts, synth.params.variables);
         // add the necessary random values, if any
