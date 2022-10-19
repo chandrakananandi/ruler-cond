@@ -1,0 +1,7 @@
+(plug "bop" {& | ^ ->}
+  (plug "uop" {~}
+    (plug "var" {ba bb bc}
+      (plug "lit" {true false}
+        (filter (contains var)
+          (filter (#atoms < 2)
+            {lit var}))))))

@@ -1,0 +1,13 @@
+(filter (canon a b c)
+  (plug "bop" {& | ^ ->}
+    (plug "uop" {~}
+      (plug "var" {ba bb bc}
+        (plug "lit" {true false}
+          (filter (contains var)
+            (filter (#atoms < 5)
+              (plug "lang"
+                (plug "lang"
+                  (plug "lang" {lit var}
+                    {lit var (uop lang) (bop lang lang)})
+                  {lit var (uop lang) (bop lang lang)})
+                {lit var (uop lang) (bop lang lang)}))))))))

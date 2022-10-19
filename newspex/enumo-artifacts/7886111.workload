@@ -1,0 +1,10 @@
+(plug "bop" {+ - * /}
+  (plug "uop" {~}
+    (plug "var" {a b c}
+      (plug "lit" {-1 0 1 2}
+        (filter (contains var)
+          (filter (#atoms < 4)
+            (plug "lang"
+              (plug "lang" {lit var}
+                {lit var (uop lang) (bop lang lang)})
+              {lit var (uop lang) (bop lang lang)})))))))
