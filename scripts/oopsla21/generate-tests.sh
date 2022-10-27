@@ -10,7 +10,7 @@ done
 MYDIR="$(cd -P "$(dirname "$src")" && pwd)"
 
 # change to top-level directory
-cd $MYDIR/..
+cd $MYDIR/../..
 
 # generate rulesets
 echo "Generating test files..."
