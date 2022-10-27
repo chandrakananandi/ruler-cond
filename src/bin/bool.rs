@@ -190,8 +190,8 @@ impl SynthLanguage for Math {
             rule_lifting: false,
         });
 
-        egraph.add(Math::Lit(false));
-        egraph.add(Math::Lit(true));
+        // egraph.add(Math::Lit(false));
+        // egraph.add(Math::Lit(true));
 
         for (i, item) in consts.iter().enumerate().take(synth.params.variables) {
             let var = Symbol::from("b".to_owned() + letter(i));
