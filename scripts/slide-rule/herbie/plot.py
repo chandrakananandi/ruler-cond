@@ -57,9 +57,9 @@ slide_rule_path = sys.argv[2]
 oopsla21_path = sys.argv[3]
 output_file = sys.argv[4]
 
-first_input =  ('SlideRule', '{}/result.json'.format(herbie_path))
-second_input = ('Ruler',     '{}/result.json'.format(slide_rule_path))
-third_input =  ('Herbie',    '{}/result.json'.format(oopsla21_path))
+first_input =  ('SlideRule', '{}/results.json'.format(slide_rule_path))
+second_input = ('Ruler',     '{}/results.json'.format(oopsla21_path))
+third_input =  ('Herbie',    '{}/results.json'.format(herbie_path))
 
 xs1, ys1, first_plotted =  get_dataset(first_input[1])
 xs2, ys2, second_plotted = get_dataset(second_input[1])

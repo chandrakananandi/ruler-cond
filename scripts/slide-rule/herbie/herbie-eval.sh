@@ -14,7 +14,7 @@ MYDIR="$(cd -P "$(dirname "$src")" && pwd)"
 
 # configuration
 HERBIE_DIR=herbie/
-HERBIE_COMMIT=20216197f6de8c5a3384a41d195559f4f4e420d2
+HERBIE_COMMIT=e00a7c5018edd7eba037318330b1bbbd4fdc202a
 OUTPUT_DIR=output/
 BENCH_DIR=ruler-bench/
 

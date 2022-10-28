@@ -1,1 +1,342 @@
-{"all_eqs":[{"lhs":"(- ?c (- ?b ?a))","rhs":"(- ?a (- ?b ?c))","bidirectional":false},{"lhs":"(* ?c (* ?b ?a))","rhs":"(* ?b (* ?c ?a))","bidirectional":false},{"lhs":"(- (- ?c ?b) ?a)","rhs":"(- (- ?c ?a) ?b)","bidirectional":false},{"lhs":"(+ ?c (+ ?b ?a))","rhs":"(+ ?b (+ ?a ?c))","bidirectional":true},{"lhs":"(- (+ ?c ?b) ?a)","rhs":"(+ ?c (- ?b ?a))","bidirectional":true},{"lhs":"(- ?c (- ?b ?a))","rhs":"(+ ?c (- ?a ?b))","bidirectional":true},{"lhs":"(/ ?c (* ?b ?a))","rhs":"(/ (/ ?c ?b) ?a)","bidirectional":true},{"lhs":"(- ?c (+ ?b ?a))","rhs":"(- (- ?c ?b) ?a)","bidirectional":true},{"lhs":"(/ (- ?c ?b) ?a)","rhs":"(- (/ ?c ?a) (/ ?b ?a))","bidirectional":true},{"lhs":"(- (* ?b ?c) (* ?b ?a))","rhs":"(* ?b (- ?c ?a))","bidirectional":true},{"lhs":"(/ (+ ?c ?b) ?a)","rhs":"(+ (/ ?b ?a) (/ ?c ?a))","bidirectional":true},{"lhs":"(+ (* ?c ?b) (* ?b ?a))","rhs":"(* ?b (+ ?c ?a))","bidirectional":true},{"lhs":"(/ (- (* ?c ?a) ?b) ?a)","rhs":"(- ?c (/ ?b ?a))","bidirectional":true},{"lhs":"(/ ?a (- (/ ?c ?b) ?a))","rhs":"(/ ?b (- (/ ?c ?a) ?b))","bidirectional":false},{"lhs":"(* ?b ?a)","rhs":"(* ?a ?b)","bidirectional":false},{"lhs":"(+ ?b ?a)","rhs":"(+ ?a ?b)","bidirectional":false},{"lhs":"(* ?b (+ ?a ?a))","rhs":"(* ?a (+ ?b ?b))","bidirectional":false},{"lhs":"(/ ?b ?a)","rhs":"(/ (+ ?b ?b) (+ ?a ?a))","bidirectional":true},{"lhs":"(- (* ?b ?b) (* ?a ?a))","rhs":"(* (- ?b ?a) (+ ?b ?a))","bidirectional":true},{"lhs":"(- (sqr (sin ?b)) (sqr (cos ?a)))","rhs":"(- (sqr (sin ?a)) (sqr (cos ?b)))","bidirectional":false},{"lhs":"(- (sqr (sin ?b)) (sqr (sin ?a)))","rhs":"(- (sqr (cos ?a)) (sqr (cos ?b)))","bidirectional":true},{"lhs":"?a","rhs":"(~ (~ ?a))","bidirectional":true},{"lhs":"(cos ?a)","rhs":"(cos (~ ?a))","bidirectional":true},{"lhs":"(~ (sin ?a))","rhs":"(sin (~ ?a))","bidirectional":true},{"lhs":"(~ (tan ?a))","rhs":"(tan (~ ?a))","bidirectional":true},{"lhs":"(sin ?a)","rhs":"(sin (- PI ?a))","bidirectional":true},{"lhs":"(tan ?a)","rhs":"(tan (+ ?a PI))","bidirectional":true},{"lhs":"(~ (cos ?a))","rhs":"(cos (+ PI ?a))","bidirectional":true},{"lhs":"?a","rhs":"(* ?a 1)","bidirectional":true},{"lhs":"?a","rhs":"(+ ?a 0)","bidirectional":true},{"lhs":"?a","rhs":"(/ ?a 1)","bidirectional":true},{"lhs":"?a","rhs":"(- ?a 0)","bidirectional":true},{"lhs":"(- ?a ?a)","rhs":"0","bidirectional":false},{"lhs":"(/ ?a ?a)","rhs":"1","bidirectional":false},{"lhs":"(~ ?a)","rhs":"(/ ?a -1)","bidirectional":true},{"lhs":"(~ ?a)","rhs":"(* ?a -1)","bidirectional":true},{"lhs":"(~ ?a)","rhs":"(- 0 ?a)","bidirectional":true},{"lhs":"(+ ?a ?a)","rhs":"(* 2 ?a)","bidirectional":true},{"lhs":"(+ (sqr (sin ?a)) (sqr (cos ?a)))","rhs":"1","bidirectional":false},{"lhs":"(/ 0 ?a)","rhs":"0","bidirectional":false},{"lhs":"(* ?a 0)","rhs":"0","bidirectional":false},{"lhs":"(- ?a -1)","rhs":"(+ ?a 1)","bidirectional":true},{"lhs":"(- ?a 1)","rhs":"(+ ?a -1)","bidirectional":true},{"lhs":"(tan PI)","rhs":"(sin PI)","bidirectional":true},{"lhs":"(sin PI)","rhs":"(sin (+ PI PI))","bidirectional":true},{"lhs":"(tan (+ PI PI))","rhs":"(sin PI)","bidirectional":true},{"lhs":"0","rhs":"(sin PI)","bidirectional":true},{"lhs":"-1","rhs":"(cos PI)","bidirectional":true},{"lhs":"1","rhs":"(cos (+ PI PI))","bidirectional":true},{"lhs":"0","rhs":"(tan 0)","bidirectional":true},{"lhs":"0","rhs":"(sin 0)","bidirectional":true},{"lhs":"1","rhs":"(cos 0)","bidirectional":true},{"lhs":"0","rhs":"(cos (/ PI 2))","bidirectional":true},{"lhs":"1","rhs":"(sin (/ PI 2))","bidirectional":true}],"new_eqs":[],"old_eqs":[],"time":0.0}
+{
+    "all_eqs":[
+        {
+            "lhs":"(+ ?c (+ ?b ?a))",
+            "rhs":"(+ ?b (+ ?a ?c))",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(/ (/ ?c ?b) ?a)",
+            "rhs":"(/ (/ ?c ?a) ?b)",
+            "bidirectional":false
+        },
+        {
+            "lhs":"(- (- ?c ?b) ?a)",
+            "rhs":"(- (- ?c ?a) ?b)",
+            "bidirectional":false
+        },
+        {
+            "lhs":"(* ?c (* ?b ?a))",
+            "rhs":"(* ?a (* ?b ?c))",
+            "bidirectional":false
+        },
+        {
+            "lhs":"(/ ?c (/ ?b ?a))",
+            "rhs":"(/ ?a (/ ?b ?c))",
+            "bidirectional":false
+        },
+        {
+            "lhs":"(/ ?c (* ?b ?a))",
+            "rhs":"(/ (/ ?c ?a) ?b)",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(- ?c (+ ?b ?a))",
+            "rhs":"(- (- ?c ?b) ?a)",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(/ (* ?c ?b) ?a)",
+            "rhs":"(* ?c (/ ?b ?a))",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(/ ?c (/ ?b ?a))",
+            "rhs":"(* ?c (/ ?a ?b))",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(/ (+ ?b (- ?c ?b)) ?a)",
+            "rhs":"(/ ?c ?a)",
+            "bidirectional":false
+        },
+        {
+            "lhs":"(/ ?c (+ ?a (- ?b ?a)))",
+            "rhs":"(/ ?c ?b)",
+            "bidirectional":false
+        },
+        {
+            "lhs":"(- (* ?b ?c) (* ?b ?a))",
+            "rhs":"(* ?b (- ?c ?a))",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(+ (* ?c ?b) (* ?b ?a))",
+            "rhs":"(* ?b (+ ?c ?a))",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(/ (+ ?c (* ?a ?b)) ?a)",
+            "rhs":"(+ ?b (/ ?c ?a))",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(/ (- ?c (* ?a ?b)) ?a)",
+            "rhs":"(- (/ ?c ?a) ?b)",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(/ ?a (* ?c (* ?b ?a)))",
+            "rhs":"(/ 1 (* ?c ?b))",
+            "bidirectional":false
+        },
+        {
+            "lhs":"(* ?b ?a)",
+            "rhs":"(* ?a ?b)",
+            "bidirectional":false
+        },
+        {
+            "lhs":"(+ ?b ?a)",
+            "rhs":"(+ ?a ?b)",
+            "bidirectional":false
+        },
+        {
+            "lhs":"(~ (- ?b ?a))",
+            "rhs":"(- ?a ?b)",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(- ?b ?a)",
+            "rhs":"(+ ?b (~ ?a))",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(~ (* ?b ?a))",
+            "rhs":"(* ?a (~ ?b))",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(/ ?b (~ ?a))",
+            "rhs":"(/ (~ ?b) ?a)",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(~ (/ ?b ?a))",
+            "rhs":"(/ ?b (~ ?a))",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(* ?a (/ ?b ?a))",
+            "rhs":"?b",
+            "bidirectional":false
+        },
+        {
+            "lhs":"(* ?b (+ ?a ?a))",
+            "rhs":"(* ?a (+ ?b ?b))",
+            "bidirectional":false
+        },
+        {
+            "lhs":"(- (* ?b ?b) (* ?a ?a))",
+            "rhs":"(* (- ?b ?a) (+ ?a ?b))",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(/ (+ ?a ?b) ?a)",
+            "rhs":"(+ 1 (/ ?b ?a))",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(- ?a (* ?b ?a))",
+            "rhs":"(* ?a (- 1 ?b))",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(/ (- ?a ?b) ?a)",
+            "rhs":"(- 1 (/ ?b ?a))",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(+ ?a (* ?b ?a))",
+            "rhs":"(* ?a (+ ?b 1))",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(/ (- ?b ?a) ?a)",
+            "rhs":"(+ (/ ?b ?a) -1)",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(/ ?b (+ ?b (/ ?b ?a)))",
+            "rhs":"(/ ?a (+ ?a 1))",
+            "bidirectional":false
+        },
+        {
+            "lhs":"(/ ?a (- (/ ?a ?b) ?a))",
+            "rhs":"(/ ?b (- 1 ?b))",
+            "bidirectional":false
+        },
+        {
+            "lhs":"(/ ?a (- (* ?a ?b) ?a))",
+            "rhs":"(/ 1 (+ ?b -1))",
+            "bidirectional":false
+        },
+        {
+            "lhs":"?a",
+            "rhs":"(~ (~ ?a))",
+            "bidirectional":true
+        },
+        {
+            "lhs":"?a",
+            "rhs":"(* ?a 1)",
+            "bidirectional":true
+        },
+        {
+            "lhs":"?a",
+            "rhs":"(- ?a 0)",
+            "bidirectional":true
+        },
+        {
+            "lhs":"?a",
+            "rhs":"(/ ?a 1)",
+            "bidirectional":true
+        },
+        {
+            "lhs":"?a",
+            "rhs":"(+ ?a 0)",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(- ?a ?a)",
+            "rhs":"0",
+            "bidirectional":false
+        },
+        {
+            "lhs":"(/ ?a ?a)",
+            "rhs":"1",
+            "bidirectional":false
+        },
+        {
+            "lhs":"(~ ?a)",
+            "rhs":"(/ ?a -1)",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(~ ?a)",
+            "rhs":"(* ?a -1)",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(~ ?a)",
+            "rhs":"(- 0 ?a)",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(+ ?a ?a)",
+            "rhs":"(* ?a 2)",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(/ 0 ?a)",
+            "rhs":"0",
+            "bidirectional":false
+        },
+        {
+            "lhs":"(* ?a 0)",
+            "rhs":"0",
+            "bidirectional":false
+        },
+        {
+            "lhs":"(- ?a 1)",
+            "rhs":"(+ ?a -1)",
+            "bidirectional":true
+        },
+        {
+            "lhs":"(- ?a -1)",
+            "rhs":"(+ ?a 1)",
+            "bidirectional":true
+        },
+
+        {
+        "lhs": "(- (sqr (sin ?b)) (sqr (sin ?a)))",
+        "rhs": "(- (sqr (cos ?a)) (sqr (cos ?b)))",
+        "bidirectional": true
+        },
+        {
+            "lhs": "(- (sqr (sin ?b)) (sqr (cos ?a)))",
+            "rhs": "(- (sqr (sin ?a)) (sqr (cos ?b)))",
+            "bidirectional": false
+        },
+        {
+            "lhs": "(cos ?a)",
+            "rhs": "(cos (~ ?a))",
+            "bidirectional": true
+        },
+        {
+            "lhs": "(~ (tan ?a))",
+            "rhs": "(tan (~ ?a))",
+            "bidirectional": true
+        },
+        {
+            "lhs": "(~ (sin ?a))",
+            "rhs": "(sin (~ ?a))",
+            "bidirectional": true
+        },
+        {
+            "lhs": "(+ (sqr (sin ?a)) (sqr (cos ?a)))",
+            "rhs": "1",
+            "bidirectional": false
+        },
+        {
+            "lhs": "(tan PI)",
+            "rhs": "(sin PI)",
+            "bidirectional": true
+        },
+        {
+            "lhs": "(sin PI)",
+            "rhs": "(sin (+ PI PI))",
+            "bidirectional": true
+        },
+        {
+            "lhs": "(tan (+ PI PI))",
+            "rhs": "(sin PI)",
+            "bidirectional": true
+        },
+        {
+            "lhs": "0",
+            "rhs": "(sin PI)",
+            "bidirectional": true
+        },
+        {
+            "lhs": "-1",
+            "rhs": "(cos PI)",
+            "bidirectional": true
+        },
+        {
+            "lhs": "1",
+            "rhs": "(cos (+ PI PI))",
+            "bidirectional": true
+        },
+        {
+            "lhs": "0",
+            "rhs": "(tan 0)",
+            "bidirectional": true
+        },
+        {
+            "lhs": "0",
+            "rhs": "(sin 0)",
+            "bidirectional": true
+        },
+        {
+            "lhs": "1",
+            "rhs": "(cos 0)",
+            "bidirectional": true
+        },
+        {
+            "lhs": "0",
+            "rhs": "(cos (/ PI 2))",
+            "bidirectional": true
+        },
+        {
+            "lhs": "1",
+            "rhs": "(sin (/ PI 2))",
+            "bidirectional": true
+        }
+    ],
+    "new_eqs":[
+
+    ],
+    "old_eqs":[
+
+    ],
+    "time":0.0
+ }
