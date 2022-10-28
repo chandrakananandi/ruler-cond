@@ -36,11 +36,14 @@ git clone https://github.com/herbie-fp/herbie.git $BUILD_DIR ||    \
 # copy hacked datafile to extract frontier
 cp ruler-datafile.rkt $BUILD_DIR/src/datafile.rkt
 
+# copy fixed alt-table.rkt
+cp fixed-alt-table.rkt $BUILD_DIR/src/core/alt-table.rkt
+
 pushd $BUILD_DIR
 
-git pull
+git fetch
 git checkout $HERBIE_COMMIT
-make install
+make -C $HERBIE_DIR install
 
 popd    # BUILD_DIR
 

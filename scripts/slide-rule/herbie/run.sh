@@ -44,6 +44,7 @@ function do_seed {
     seed="$1"
     mkdir -p "$OUTPUT_DIR/$seed"
     $HERBIE report                  \
+            --seed $seed            \
             --threads $THREADS      \
             --timeout $TIMEOUT      \
             $BENCH                  \
