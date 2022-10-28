@@ -12,10 +12,13 @@
   (values
     (let loop ([expr (parse-string expr)])
       (match expr
+       [(list '~ arg)
+        (list 'neg (loop arg))]
+       [(list 'sqr arg)
+        (define arg* (loop arg))
+        (list '* arg* arg*)]
        [(list op args ...)
-        (match op
-         ['~ (cons 'neg (map loop args))]
-         [_ (cons op (map loop args))])]
+        (cons op (map loop args))]
        [(? number?) expr]
        [(? symbol?)
         (define str-repr (symbol->string expr))

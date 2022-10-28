@@ -14,8 +14,7 @@
         start-est result-est time bits link cost-accuracy) #:prefab)
 
 (struct report-info
-  (date commit branch hostname seed flags points iterations note tests)
-  #:prefab #:mutable)
+  (date commit branch hostname seed flags points iterations note tests) #:prefab #:mutable)
 
 (define (extract-frontier test)
   (match (table-row-cost-accuracy test)
@@ -160,15 +159,6 @@
   (unless dirs
     (set! dirs (map (const #f) dfs)))
 
-  (define tests
-    (for/list ([df (in-list dfs)] [dir (in-list dirs)]
-               #:when true
-               [test (in-list (report-info-tests df))])
-      (struct-copy table-row test
-                   [link (if dir
-                             (format "~a/~a" dir (table-row-link test))
-                             (table-row-link test))])))
-
   (report-info
    (last (sort (map report-info-date dfs) < #:key date->seconds))
    (report-info-commit (first dfs))
@@ -179,7 +169,13 @@
    (report-info-points (first dfs))
    (report-info-iterations (first dfs))
    (if name (~a name) (~a (cons 'merged (map report-info-note dfs))))
-   tests))
+   (for/list ([df (in-list dfs)] [dir (in-list dirs)]
+              #:when true
+              [test (in-list (report-info-tests df))])
+     (struct-copy table-row test
+                  [link (if dir
+                            (format "~a/~a" dir (table-row-link test))
+                            (table-row-link test))]))))
 
 (define (diff-datafiles old new)
   (define old-tests

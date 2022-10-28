@@ -14,12 +14,12 @@ MYDIR="$(cd -P "$(dirname "$src")" && pwd)"
 
 # configuration
 HERBIE_DIR=herbie/
-HERBIE_COMMIT=3b7366bf96fdd76fd5c9c84006deab1a
+HERBIE_COMMIT=20216197f6de8c5a3384a41d195559f4f4e420d2
 OUTPUT_DIR=output/
 BENCH_DIR=ruler-bench/
 
 # Install Herbie
-# BUILD_DIR=$HERBIE_DIR ./install.sh
+BUILD_DIR=$HERBIE_DIR HERBIE_COMMIT=$HERBIE_COMMIT ./install.sh
 
 # Form benchmark suite
 mkdir -p $BENCH_DIR
@@ -58,7 +58,7 @@ SEEDS="seeds.txt"
 
 mkdir -p $OUTPUT_DIR/plot
 while read -r seed; do
-    python plot.py                    \
+    python3 plot.py                   \
       "$OUTPUT_DIR/main/$seed"        \
       "$OUTPUT_DIR/slide-rule/$seed"  \
       "$OUTPUT_DIR/oopsla21/$seed"    \
