@@ -43,7 +43,7 @@ pushd $BUILD_DIR
 
 git fetch
 git checkout $HERBIE_COMMIT
-make -C $HERBIE_DIR install
+make install
 
 popd    # BUILD_DIR
 
