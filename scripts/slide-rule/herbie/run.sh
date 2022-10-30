@@ -12,18 +12,48 @@ while [ -L "$src" ]; do
 done
 MYDIR="$(cd -P "$(dirname "$src")" && pwd)"
 
-SEEDS="seeds.txt"
-SEED_COUNT=10
-THREADS=4
-TIMEOUT=300
-
-# prepare seeds
-if [ -f "$SEEDS" ]; then
-    echo "Found seeds file"
+# check for seeds
+if [ -z "$1" ]; then
+  echo "seeds file not provided"
+  exit 1
 else
-    echo "Created seeds file"
-    shuf -i 1-65535 -n $SEED_COUNT | sort -n > $SEEDS
+  SEEDS=$1
 fi
+
+# check for bench directory
+if [ -z "$2" ]; then
+  echo "benchmark directory not provided"
+  exit 1
+else
+  BENCH=$2
+fi
+
+# check for output directory
+if [ -z "$3" ]; then
+  echo "output directory not provided"
+  exit 1
+else
+  OUTPUT_DIR=$3
+fi
+
+# check for herbie directory
+if [ -z "$HERBIE_DIR" ]; then
+  echo "herbie directory not provided"
+  exit 1
+fi
+
+# set timeout
+if [ -z "$TIMEOUT" ]; then
+  TIMEOUT=300
+fi
+
+# set threads
+if [ -z "$THREADS" ]; then
+  THREADS=4
+fi
+
+echo "Timeout limit set at $TIMEOUT seconds"
+echo "Running with $THREADS threads"
 
 # run Herbie
 mkdir -p $OUTPUT_DIR
@@ -41,14 +71,15 @@ else
 fi
 
 function do_seed {
-    seed="$1"
-    mkdir -p "$OUTPUT_DIR/$seed"
-    $HERBIE report                  \
-            --seed $seed            \
-            --threads $THREADS      \
-            --timeout $TIMEOUT      \
-            $BENCH                  \
-            "$OUTPUT_DIR/$seed"
+  seed="$1"
+  mkdir -p "$OUTPUT_DIR/$seed"
+  racket "$HERBIE_DIR/src/herbie.rkt"   \
+          report                        \
+          --seed $seed                  \
+          --threads $THREADS            \
+          --timeout $TIMEOUT            \
+          $BENCH                        \
+          "$OUTPUT_DIR/$seed"
 }
 
 # sample herbie behavior

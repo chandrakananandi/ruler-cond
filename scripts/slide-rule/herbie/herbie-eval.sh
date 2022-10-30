@@ -15,11 +15,17 @@ MYDIR="$(cd -P "$(dirname "$src")" && pwd)"
 # configuration
 HERBIE_DIR=herbie/
 HERBIE_COMMIT=2ac0716ca93715987f834f39a4d569358567faa5
-OUTPUT_DIR=output/
+OUTPUT_DIR=output2/
 BENCH_DIR=ruler-bench/
+SEEDS="seeds.txt"
+
+# set timeout
+if [ -z "$SEED_COUNT" ]; then
+  SEED_COUNT=10
+fi
 
 # Install Herbie
-BUILD_DIR=$HERBIE_DIR HERBIE_COMMIT=$HERBIE_COMMIT ./install.sh
+BUILD_DIR=$HERBIE_DIR HERBIE_COMMIT=$HERBIE_COMMIT bash ./install.sh
 
 # Form benchmark suite
 mkdir -p $BENCH_DIR
@@ -33,34 +39,38 @@ racket ruler-to-herbie.rkt --tags arithmetic \
 racket ruler-to-herbie.rkt --tags arithmetic --old-format \
   empty-rules.rkt rulesets/oopsla21.json oopsla21-rules.rkt
 
-# Run Herbie
-HERBIE_CMD="racket $HERBIE_DIR/src/herbie.rkt"
+# prepare seeds
+if [ -f "$SEEDS" ]; then
+  echo "Found seeds file"
+else
+  echo "Created seeds file"
+  shuf -i 1-65535 -n $SEED_COUNT | sort -n > $SEEDS
+fi
 
+# Run Herbie
 mkdir -p $OUTPUT_DIR
 
 # Run with current rules
 echo "Running Pareto-Herbie with current ruleset"
 cp default-rules.rkt $HERBIE_DIR/src/syntax/rules.rkt
-HERBIE=$HERBIE_CMD OUTPUT_DIR="$OUTPUT_DIR/main" BENCH=$BENCH_DIR ./run.sh
+HERBIE_DIR=$HERBIE_DIR bash run.sh $SEEDS $BENCH_DIR "$OUTPUT_DIR/main"
 
 # Run with SlideRule rules
 echo "Running Pareto-Herbie with SlideRule ruleset"
 cp slide-rule-rules.rkt $HERBIE_DIR/src/syntax/rules.rkt
-HERBIE=$HERBIE_CMD OUTPUT_DIR="$OUTPUT_DIR/slide-rule" BENCH=$BENCH_DIR ./run.sh
+HERBIE_DIR=$HERBIE_DIR bash run.sh $SEEDS $BENCH_DIR "$OUTPUT_DIR/slide-rule"
 
 # Run with OOPSLA21 rules
 echo "Running Pareto-Herbie with OOPSLA 21 ruleset"
 cp oopsla21-rules.rkt $HERBIE_DIR/src/syntax/rules.rkt
-HERBIE=$HERBIE_CMD OUTPUT_DIR="$OUTPUT_DIR/oopsla21" BENCH=$BENCH_DIR ./run.sh
+HERBIE_DIR=$HERBIE_DIR bash run.sh $SEEDS $BENCH_DIR "$OUTPUT_DIR/oopsla21"
 
 # Plot result
-SEEDS="seeds.txt"
-
 mkdir -p $OUTPUT_DIR/plot
 while read -r seed; do
-    python3 plot.py                   \
-      "$OUTPUT_DIR/main/$seed"        \
-      "$OUTPUT_DIR/slide-rule/$seed"  \
-      "$OUTPUT_DIR/oopsla21/$seed"    \
-      "$OUTPUT_DIR/plot/$seed.png"
+  python3 plot.py                   \
+    "$OUTPUT_DIR/main/$seed"        \
+    "$OUTPUT_DIR/slide-rule/$seed"  \
+    "$OUTPUT_DIR/oopsla21/$seed"    \
+    "$OUTPUT_DIR/plot/$seed.png"
 done < $SEEDS
