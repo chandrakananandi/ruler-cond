@@ -15,7 +15,7 @@ MYDIR="$(cd -P "$(dirname "$src")" && pwd)"
 # configuration
 HERBIE_DIR=herbie/
 HERBIE_COMMIT=2ac0716ca93715987f834f39a4d569358567faa5
-OUTPUT_DIR=output2/
+OUTPUT_DIR=output/
 BENCH_DIR=ruler-bench/
 SEEDS="seeds.txt"
 
@@ -66,11 +66,4 @@ cp oopsla21-rules.rkt $HERBIE_DIR/src/syntax/rules.rkt
 HERBIE_DIR=$HERBIE_DIR bash run.sh $SEEDS $BENCH_DIR "$OUTPUT_DIR/oopsla21"
 
 # Plot result
-mkdir -p $OUTPUT_DIR/plot
-while read -r seed; do
-  python3 plot.py                   \
-    "$OUTPUT_DIR/main/$seed"        \
-    "$OUTPUT_DIR/slide-rule/$seed"  \
-    "$OUTPUT_DIR/oopsla21/$seed"    \
-    "$OUTPUT_DIR/plot/$seed.png"
-done < $SEEDS
+bash plot-individual.sh $SEEDS $OUTPUT_DIR

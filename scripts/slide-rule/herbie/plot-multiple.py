@@ -50,44 +50,42 @@ def get_dataset(filepath, benchmark_name=None):
 
     return (xs, ys, current_plotted)
 
-fig, ax = plt.subplots()
+if len(sys.argv) != 10:
+    print("Expected 10 arguments")
+    sys.exit(1)
 
-herbie_path = sys.argv[1]
-slide_rule_path = sys.argv[2]
-oopsla21_path = sys.argv[3]
-output_file = sys.argv[4]
+fig, axes = plt.subplots(nrows=3, ncols=3, sharex=True, sharey=True, figsize=(10, 10), dpi=120)
+axes_list = [item for sublist in axes for item in sublist]
 
-first_input =  ('SlideRule', '{}/results.json'.format(slide_rule_path))
-second_input = ('Ruler',     '{}/results.json'.format(oopsla21_path))
-third_input =  ('Herbie',    '{}/results.json'.format(herbie_path))
+# fig.add_subplot(111, frameon=False)
+# plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
 
-xs1, ys1, first_plotted =  get_dataset(first_input[1])
-xs2, ys2, second_plotted = get_dataset(second_input[1])
-xs3, ys3, third_plotted =  get_dataset(third_input[1])
+for i, ax in enumerate(axes_list):
+    seed = sys.argv[i + 1]
+    herbie_path = 'output/main/{}'.format(seed)
+    slide_rule_path = 'output/slide-rule/{}'.format(seed)
+    oopsla21_path = 'output/oopsla21/{}'.format(seed)
 
-plt.plot(xs1, ys1)
-plt.plot(xs2, ys2, color="red")
-plt.plot(xs3, ys3, color="green")
+    xs1, ys1, first_plotted =  get_dataset('{}/results.json'.format(slide_rule_path))
+    xs2, ys2, second_plotted = get_dataset('{}/results.json'.format(oopsla21_path))
+    xs3, ys3, third_plotted =  get_dataset('{}/results.json'.format(herbie_path))
 
-ax.legend([first_input[0], second_input[0], third_input[0]])
-annot = ax.annotate("", xy=(0,0), xytext=(20,20),textcoords="offset points",
-                    bbox=dict(boxstyle="round", fc="w"),
-                    arrowprops=dict(arrowstyle="->"))
-annot.set_visible(False)
+    ax.plot(xs1, ys1, label="SlideRule")
+    ax.plot(xs2, ys2, color="red", label="Ruler")
+    ax.plot(xs3, ys3, color="green", label="Herbie")
 
-def update_annot(ind, scatter, points):
-    pos = scatter.get_offsets()[ind["ind"][0]]
-    annot.xy = pos
-    # print(ind)
-    # ind is all indices under that point
-    # print(cost_accuracies_per_benchmark[ind["ind"][0]])
-    first = points[ind["ind"][0]]["expr"]
-    text = f"{first}"
-    annot.set_text(text)
-    annot.get_bbox_patch().set_alpha(0.4)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
 
-fig.text(0.5, 0.04, 'common xlabel', ha='center', va='center')
-fig.text(0.06, 0.5, 'common ylabel', ha='center', va='center', rotation='vertical')
-plt.xlabel("Sum of Cost Estimates")
-plt.ylabel("Sum of log2(Error)")
-fig.savefig(output_file, bbox_inches='tight')
+    annot = ax.annotate("", xy=(0,0), xytext=(20,20),textcoords="offset points",
+                        bbox=dict(boxstyle="round", fc="w"),
+                        arrowprops=dict(arrowstyle="->"))
+    annot.set_visible(False)
+
+handles, labels = axes_list[1].get_legend_handles_labels()
+fig.legend(handles, labels, loc='upper right')
+fig.supxlabel("Sum of Cost Estimates")
+fig.supylabel("Sum of log2(Error)")
+
+plt.tight_layout()
+plt.savefig('output/plot/multiples.png', bbox_inches='tight')
