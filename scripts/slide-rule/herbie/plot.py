@@ -86,8 +86,6 @@ def update_annot(ind, scatter, points):
     annot.set_text(text)
     annot.get_bbox_patch().set_alpha(0.4)
 
-fig.text(0.5, 0.04, 'common xlabel', ha='center', va='center')
-fig.text(0.06, 0.5, 'common ylabel', ha='center', va='center', rotation='vertical')
 plt.xlabel("Sum of Cost Estimates")
 plt.ylabel("Sum of log2(Error)")
 fig.savefig(output_file, bbox_inches='tight')

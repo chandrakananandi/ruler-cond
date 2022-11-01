@@ -15,7 +15,7 @@ MYDIR="$(cd -P "$(dirname "$src")" && pwd)"
 # configuration
 HERBIE_DIR=herbie/
 HERBIE_COMMIT=2ac0716ca93715987f834f39a4d569358567faa5
-OUTPUT_DIR=output/
+OUTPUT_DIR=output2/
 BENCH_DIR=ruler-bench/
 SEEDS="seeds.txt"
 
@@ -65,5 +65,10 @@ echo "Running Pareto-Herbie with OOPSLA 21 ruleset"
 cp oopsla21-rules.rkt $HERBIE_DIR/src/syntax/rules.rkt
 HERBIE_DIR=$HERBIE_DIR bash run.sh $SEEDS $BENCH_DIR "$OUTPUT_DIR/oopsla21"
 
-# Plot result
+# Plot results
+
 bash plot-individual.sh $SEEDS $OUTPUT_DIR
+bash seed-variance.sh "$OUTPUT_DIR/main" "main"
+bash seed-variance.sh "$OUTPUT_DIR/slide-rule" "slide-rule"
+bash seed-variance.sh "$OUTPUT_DIR/oopsla21" "oopsla21"
+bash plot-old.sh "$OUTPUT_DIR"

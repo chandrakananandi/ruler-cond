@@ -78,6 +78,7 @@ function do_seed {
           --seed $seed                  \
           --threads $THREADS            \
           --timeout $TIMEOUT            \
+          -o generate:taylor            \
           $BENCH                        \
           "$OUTPUT_DIR/$seed"
 }
