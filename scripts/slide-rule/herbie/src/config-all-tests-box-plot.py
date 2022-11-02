@@ -19,7 +19,7 @@ if field == "time":
         times = pairs.get(k)
         new_times = []
         for t in times:
-            new_times.append(float(t) / 1000000.0)
+            new_times.append(float(t) / 1000.0)
         pairs[k] = new_times
 
 # hno = ('None', pairs['herbie-no-simpl'])
@@ -48,7 +48,7 @@ if str(field) == "output_parens":
     ax.set_ylim([0, 1500])
 elif str(field) == "time":
     yname = "Time (s)"
-    ax.set_ylim([0, 2])
+    ax.set_ylim([0, 1500])
 elif str(field) == "avg_bits_err_improve":
     yname = "Average bits of error improved"
     ax.set_ylim([0, 1500])
