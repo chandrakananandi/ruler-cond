@@ -1,11 +1,7 @@
 use egg::{AstSize, EClass, ENodeOrVar, Extractor, RecExpr, Rewrite, Runner, StopReason};
-use rand::SeedableRng;
-use rand_pcg::Pcg64;
 use std::{
     fmt::Debug,
-    fs::File,
     hash::BuildHasherDefault,
-    io::{BufRead, BufReader},
     sync::Arc,
     time::{Duration, Instant},
 };
@@ -30,44 +26,34 @@ pub type IndexMap<K, V> = indexmap::IndexMap<K, V, BuildHasherDefault<rustc_hash
 pub type EqualityMap<L> = IndexMap<Arc<str>, Equality<L>>;
 
 pub struct Synthesizer<L: SynthLanguage> {
-    pub params: SynthParams,
-    pub rng: Pcg64,
+    pub params: SynthParams<L>,
     pub egraph: EGraph<L, SynthAnalysis>,
     pub prior_rws: EqualityMap<L>,
     pub new_rws: EqualityMap<L>,
 }
 
 impl<L: SynthLanguage> Synthesizer<L> {
-    fn new(params: SynthParams) -> Self {
+    fn new(params: SynthParams<L>) -> Self {
         let mut priors: EqualityMap<L> = Default::default();
-        if let Some(filename) = params.prior_rules.clone() {
-            let file =
-                File::open(&filename).unwrap_or_else(|_| panic!("Failed to open {}", filename));
-            let report: Report<L> = serde_json::from_reader(file).unwrap();
-            for eq in report.prior_rws {
-                priors.insert(eq.name.clone(), eq);
-            }
-            for eq in report.new_rws {
-                priors.insert(eq.name.clone(), eq);
-            }
+        for eq in &params.prior_rules.0 {
+            priors.insert(eq.name.clone(), eq.clone());
         }
 
         Self {
             params,
-            rng: Pcg64::seed_from_u64(0), // TODO- parameterize?
             egraph: Default::default(),
             prior_rws: priors,
             new_rws: Default::default(),
         }
     }
 
-    fn enumerate_workload(&self, filename: &str) -> (Vec<RecExpr<L>>, Vec<String>) {
-        let infile = File::open(filename).expect("can't open file");
-        let reader = BufReader::new(infile);
+    fn parse_workload(&self, workload: &Workload) -> (Vec<RecExpr<L>>, Vec<String>) {
         let mut terms = vec![];
         let mut vars: HashSet<String> = HashSet::default();
-        for line in BufRead::lines(reader) {
-            let expr: RecExpr<L> = line.unwrap().parse().unwrap();
+        let sexps = workload.force();
+        for sexp in sexps {
+            let s = sexp.to_string();
+            let expr: RecExpr<L> = s.parse().unwrap();
             for node in expr.as_ref() {
                 if let ENodeOrVar::Var(v) = node.clone().to_enode_or_var() {
                     let mut v = v.to_string();
@@ -77,6 +63,7 @@ impl<L: SynthLanguage> Synthesizer<L> {
             }
             terms.push(expr);
         }
+
         (terms, vars.into_iter().collect())
     }
 
@@ -373,11 +360,10 @@ impl<L: SynthLanguage> Synthesizer<L> {
         candidates
     }
 
-    pub fn run(mut self) -> Report<L> {
+    pub fn run(mut self) -> Ruleset<L> {
         let t = Instant::now();
 
-        let filename = self.params.workload.clone().expect("workload is required");
-        let (workload, vars) = self.enumerate_workload(&filename);
+        let (workload, vars) = self.parse_workload(&self.params.workload);
         println!(
             "enumerated {} terms with {} vars",
             workload.len(),
@@ -394,8 +380,6 @@ impl<L: SynthLanguage> Synthesizer<L> {
 
         self.choose_eqs(candidates);
 
-        let num_rules = self.prior_rws.len() + self.new_rws.len();
-
         let time = t.elapsed().as_secs_f64();
 
         println!(
@@ -409,23 +393,13 @@ impl<L: SynthLanguage> Synthesizer<L> {
             println!("{:?}      {}", eq.score(), name);
         }
 
-        Report {
-            params: self.params,
-            time,
-            num_rules,
-            prior_rws: self.prior_rws.into_iter().map(|(_, eq)| eq).collect(),
-            new_rws: self.new_rws.into_iter().map(|(_, eq)| eq).collect(),
-        }
+        Ruleset(self.new_rws.into_iter().map(|(_, eq)| eq).collect())
     }
 }
 
-pub fn synth<L: SynthLanguage>(params: SynthParams) {
-    let outfile = params.outfile.clone();
+pub fn synth<L: SynthLanguage>(params: SynthParams<L>) -> Ruleset<L> {
     let syn = Synthesizer::<L>::new(params);
-    let report = syn.run();
-    let file =
-        std::fs::File::create(&outfile).unwrap_or_else(|_| panic!("Failed to open '{}'", outfile));
-    serde_json::to_writer_pretty(file, &report).expect("failed to write json");
+    syn.run()
 }
 
 // Cost function for ast size in the domain

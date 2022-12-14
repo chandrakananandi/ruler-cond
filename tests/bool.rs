@@ -126,6 +126,81 @@ impl SynthLanguage for Bool {
     }
 }
 
-fn main() {
-    Bool::run_synth()
+#[cfg(test)]
+mod test {
+    use ruler::enumo::{Ruleset, Workload};
+
+    use super::*;
+
+    fn iter_bool(n: usize) -> Workload {
+        Workload::iter_lang(
+            n,
+            &["true", "false"],
+            &["a", "b", "c"],
+            &["~"],
+            &["&", "|", "^", "->"],
+        )
+    }
+
+    #[test]
+    fn simple() {
+        let mut all_rules = Ruleset::default();
+        let atoms3 = iter_bool(3);
+        assert_eq!(atoms3.force().len(), 93);
+
+        let rules3 = Bool::run_workload_with_limits(atoms3, all_rules.clone(), 3, 30, 1000000);
+        assert_eq!(rules3.len(), 14);
+        all_rules.extend(rules3);
+
+        let atoms4 = iter_bool(4);
+        assert_eq!(atoms4.force().len(), 348);
+
+        let rules4 = Bool::run_workload_with_limits(atoms4, all_rules.clone(), 3, 30, 1000000);
+        assert_eq!(rules4.len(), 3);
+        all_rules.extend(rules4);
+
+        let atoms5 = iter_bool(5);
+        assert_eq!(atoms5.force().len(), 4599);
+
+        let rules5 = Bool::run_workload_with_limits(atoms5, all_rules.clone(), 3, 30, 1000000);
+        assert_eq!(rules5.len(), 15);
+        all_rules.extend(rules5);
+
+        assert_eq!(all_rules.len(), 32);
+    }
+
+    #[test]
+    fn round_trip_to_file() {
+        let rules: Ruleset<Bool> = Ruleset(
+            vec![
+                "(^ ?b ?a) ==> (^ ?a ?b)",
+                "(& ?b ?a) ==> (& ?a ?b)",
+                "(| ?b ?a) ==> (| ?a ?b)",
+                "(& ?a ?a) ==> ?a",
+                "?a ==> (~ (~ ?a))",
+            ]
+            .iter()
+            .map(|x| x.parse().unwrap())
+            .collect(),
+        );
+
+        rules.to_file("out.txt");
+
+        let read: Ruleset<Bool> = Ruleset::from_file("out.txt");
+
+        assert_eq!(rules, read)
+    }
+
+    #[test]
+    fn derive_rules() {
+        let three = Bool::run_workload_with_limits(iter_bool(3), Ruleset::default(), 3, 30, 100000);
+        three.to_file("three.txt");
+
+        let four = Bool::run_workload_with_limits(iter_bool(4), Ruleset::default(), 3, 30, 100000);
+        four.to_file("four.txt");
+
+        let (can, cannot) = three.derive(four, 2);
+        assert_eq!(can.len(), 10);
+        assert_eq!(cannot.len(), 6);
+    }
 }
