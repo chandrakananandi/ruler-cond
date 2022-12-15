@@ -240,11 +240,11 @@ mod test {
         let baseline = Ruleset::<_>::from_file("recipes/baseline/bool.rules");
         assert_eq!(baseline.len(), 27);
 
-        let (can, cannot) = all_rules.derive(baseline, 2);
+        let (can, _cannot) = all_rules.derive(baseline, 2);
 
-        let mut output = File::create("/data/pavpan/nightlies/bake/main/data/output.json")?;
+        let mut output = File::create("output.json")?;
 
-        write!(output, "[{{\"Name\" : \"bool\", \"Length\" : {}, \"Time\" : {}, \"Derivability\" : {}}}]", all_rules.len(), duration.as_secs(), can.len())?;
+        write!(output, "[{{\"Name\" : \"bool\", \"Length\" : {}, \"Time\" : {}, \"Derivability\" : {}}}]", &all_rules.len(), duration.as_secs(), can.len())?;
         Ok(())
     }
 }
