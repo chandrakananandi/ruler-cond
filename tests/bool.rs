@@ -1,5 +1,8 @@
 use ruler::*;
+use std::io::Write;
 use std::ops::*;
+use std::time::Instant;
+use std::fs::File;
 
 egg::define_language! {
   pub enum Bool {
@@ -202,5 +205,46 @@ mod test {
         let (can, cannot) = three.derive(four, 2);
         assert_eq!(can.len(), 10);
         assert_eq!(cannot.len(), 6);
+    }
+
+    #[test]
+    fn nightlies() -> std::io::Result<()> {
+        let mut all_rules = Ruleset::default();
+        let start = Instant::now();
+
+        let atoms3 = iter_bool(3);
+        assert_eq!(atoms3.force().len(), 93);
+
+        let rules3 = Bool::run_workload_with_limits(atoms3, all_rules.clone(), 3, 30, 1000000);
+        assert_eq!(rules3.len(), 14);
+        all_rules.extend(rules3);
+
+        let atoms4 = iter_bool(4);
+        assert_eq!(atoms4.force().len(), 348);
+
+        let rules4 = Bool::run_workload_with_limits(atoms4, all_rules.clone(), 3, 30, 1000000);
+        assert_eq!(rules4.len(), 3);
+        all_rules.extend(rules4);
+
+        let atoms5 = iter_bool(5);
+        assert_eq!(atoms5.force().len(), 4599);
+
+        let rules5 = Bool::run_workload_with_limits(atoms5, all_rules.clone(), 3, 30, 1000000);
+        assert_eq!(rules5.len(), 15);
+        all_rules.extend(rules5);
+
+        let duration = start.elapsed();
+        assert_eq!(all_rules.len(), 32);
+        all_rules.to_file("bool_rules.txt");
+
+        let baseline = Ruleset::<_>::from_file("recipes/baseline/bool.rules");
+        assert_eq!(baseline.len(), 27);
+
+        let (can, cannot) = all_rules.derive(baseline, 2);
+
+        let mut output = File::create("/data/pavpan/nightlies/bake/main/data/output.json")?;
+
+        write!(output, "[{{\"Name\" : \"bool\", \"Length\" : {}, \"Time\" : {}, \"Derivability\" : {}}}]", all_rules.len(), duration.as_secs(), can.len())?;
+        Ok(())
     }
 }
