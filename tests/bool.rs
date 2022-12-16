@@ -237,7 +237,7 @@ mod test {
         assert_eq!(all_rules.len(), 32);
         all_rules.to_file("bool_rules.txt");
 
-        let baseline = Ruleset::<_>::from_file("recipes/baseline/bool.rules");
+        let baseline = Ruleset::<_>::from_file("bool.rules");
         assert_eq!(baseline.len(), 27);
 
         let (can, _cannot) = all_rules.derive(baseline, 2);
