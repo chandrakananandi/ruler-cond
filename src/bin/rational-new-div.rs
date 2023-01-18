@@ -291,7 +291,7 @@ fn egg_to_z3<'a>(
     expr: &[Math],
 ) -> (z3::ast::Real<'a>, Vec<z3::ast::Bool<'a>>) {
     let mut buf: Vec<z3::ast::Real> = vec![];
-    let mut assumes: Vec<z3::ast::Bool> = vec![];
+    let assumes: Vec<z3::ast::Bool> = vec![];
     let zero = z3::ast::Real::from_real(&ctx, 0, 1);
     for node in expr.as_ref().iter() {
         match node {

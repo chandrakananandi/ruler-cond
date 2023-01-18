@@ -1,6 +1,6 @@
 use crate::*;
 use serde::{Deserialize, Serialize};
-use std::sync::Arc;
+use std::{sync::Arc};
 
 /// Definition of an equality.
 #[derive(Clone, Serialize, Deserialize)]
@@ -66,6 +66,7 @@ struct NotUndefined<L: SynthLanguage> {
     name: String,
     rhs: Pattern<L>,
 }
+
 
 impl<L: SynthLanguage> Applier<L, SynthAnalysis> for NotUndefined<L> {
     fn vars(&self) -> Vec<Var> {

@@ -1,5 +1,6 @@
 [alias]
 rational = ["run", "--quiet", "--release", "--bin", "rational", "--", "synth", "--important-cvec-offsets", "2"]
+pred =     ["run", "--quiet", "--release", "--bin", "pred", "--", "synth", "--important-cvec-offsets", "2", "--use-smt"]
 float =    ["run", "--quiet", "--release", "--bin", "float",    "--", "synth", "--num-fuzz", "1000000"]
 bool =     ["run", "--quiet", "--release", "--bin", "bool",     "--", "synth", "--no-conditionals"]
 str =      ["run", "--quiet", "--release", "--bin", "str",      "--", "synth", "--no-conditionals"]
