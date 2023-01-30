@@ -35,7 +35,7 @@ fn main() {
 
     let mut param = SynthParam {
         rng: SeedableRng::seed_from_u64(5),
-        n_iter: 2,
+        n_iter: 1,
         n_samples: 10,
         variables: vec!["x".into(), "y".into(), "z".into()],
         consts: vec![Constant::Number(0), Constant::Number(1)], //, Constant::Boolean(false)] //, Constant::Boolean(true)],
@@ -43,7 +43,7 @@ fn main() {
     };
 
     if args.len() < 2 {
-        param.run(13, false);
+        param.run(13, true);
     } else if args.len() >= 2 && args[1] == "simplify" {
         let res = simplify(param);
         match res {
@@ -51,6 +51,6 @@ fn main() {
             Err(_) => println!("Error while simplifying"),
         }
     } else {
-        println!("USAGE: \n `cargo run` will run Ruler \n `cargo run simplify` will allow simplifying an expression.");
+        println!("USAGE: \n `cargo run --bin ruler` will run Ruler.");
     }
 }
